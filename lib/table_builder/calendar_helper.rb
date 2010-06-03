@@ -1,14 +1,14 @@
 module CalendarHelper
 
-  def calendar_for(objects, *args)
+  def calendar_for(objects, *args, &block)
     raise ArgumentError, "Missing block" unless block_given?
     options = args.last.is_a?(Hash) ? args.pop : {}
     html_options = options[:html]
     builder = options[:builder] || CalendarBuilder
     calendar = options[:calendar] || Calendar
-    concat(tag(:table, html_options, true))
-    yield builder.new(objects || [], self, calendar, options)
-    concat('</table>')
+
+    content = with_output_buffer{block.call(builder.new(objects||[], self, calendar, options))}
+    self.content_tag(:table, content, html_options, false)
   end
 
   class CalendarBuilder < TableHelper::TableBuilder
@@ -18,22 +18,24 @@ module CalendarHelper
       @today = options[:today] || Time.now
     end    
     
-    def day(*args)
-      raise ArgumentError, "Missing block" unless block_given?
-      options = options_from_hash(args)
-      day_method = options.delete(:day_method) || :date
-      id_pattern = options.delete(:id)
-      tbody do
+    def day(*args,&block)
+        raise ArgumentError, "Missing block" unless block_given?
+        options = options_from_hash(args)
+        day_method = options.delete(:day_method) || :date
+        id_pattern = options.delete(:id)
+        activity_class = options.delete(:activity)
+        output = ""
         @calendar.objects_for_days(@objects, day_method).to_a.sort{|a1, a2| a1.first <=> a2.first }.each do |o|
-          key, array = o
-          day, objects = array
-          concat(tag(:tr, options, true)) if(day.wday ==  @calendar.first_weekday)
-          concat(tag(:td, td_options(day, id_pattern), true))
-          yield(day, objects)
-          concat('</td>')
-          concat('</tr>') if(day.wday ==  @calendar.last_weekday)
+            key, array = o
+            day, objects = array
+
+            output << @template.tag(:tr,options,true) if (day.wday ==  @calendar.first_weekday)
+            output << @template.tag(:td,td_options(day, id_pattern, (objects.empty? ? nil: activity_class)), true)
+            output << @template.with_output_buffer{block.call(day, objects)}
+            output << '</td>'
+            output << '</tr>' if (day.wday ==  @calendar.last_weekday)
         end
-      end
+        @template.content_tag(:tbody, output.html_safe, {}, false)  
     end
 
     private
@@ -42,7 +44,7 @@ module CalendarHelper
       @calendar.objects_for_days(@objects)
     end
     
-    def td_options(day, id_pattern)
+    def td_options(day, id_pattern, activity_class)
       options = {}
       if(day.strftime("%Y-%m-%d") ==  @today.strftime("%Y-%m-%d"))
         options[:class] = 'today'
@@ -50,10 +52,13 @@ module CalendarHelper
         options[:class] = 'notmonth'
       elsif(day.wday == 0 or day.wday == 6)
         options[:class] = 'weekend'
+      elsif activity_class
+        options[:class] = activity_class
       end
       if id_pattern
         options[:id] = day.strftime(id_pattern)
       end
+      
       options
     end
 

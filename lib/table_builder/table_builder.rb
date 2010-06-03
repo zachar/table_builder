@@ -1,14 +1,13 @@
 module TableHelper
 
-  def table_for(objects, *args)
+  def table_for(objects, *args, &block)
     raise ArgumentError, "Missing block" unless block_given?
     options = args.last.is_a?(Hash) ? args.pop : {}
     html_options = options[:html]
     builder = options[:builder] || TableBuilder
     
-    concat(tag(:table, html_options, true))
-    yield builder.new(objects || [], self, options)
-    concat('</table>')
+    content = with_output_buffer{block.call(builder.new(objects||[], self, options))}
+    self.content_tag(:table, content, html_options, false)
   end
 
   class TableBuilder
@@ -19,81 +18,70 @@ module TableHelper
       @objects, @template, @options = objects, template, options
     end
 
-    def head(*args)
+    def head(*args, &block)
       if block_given?
-        concat(tag(:thead, options_from_hash(args), true))
-        yield
-        concat('</thead>')
+        @template.content_tag(:thead, nil, options_from_hash(args), true, &block)
       else        
         @num_of_columns = args.size
-        content_tag(:thead,
-          content_tag(:tr,
-            args.collect { |c| content_tag(:th, c)}.join('')
-          )
-        )
+        content = args.collect do |c|
+            @template.content_tag(:th,c)
+        end.join("\n").html_safe
+        @template.content_tag(:thead, @template.content_tag(:tr,content,{},false))
       end
     end
 
-    def head_r(*args)
+    def head_r(*args, &block)
       raise ArgumentError, "Missing block" unless block_given?
       options = options_from_hash(args)
       head do
-        concat(tag(:tr, options, true))
-        yield
-        concat('</tr>')
+        @template.content_tag(:tr, nil, options, true, &block)
       end
     end
 
-    def body(*args)
+    def body(*args, &block)
       raise ArgumentError, "Missing block" unless block_given?
       options = options_from_hash(args)
-      tbody do
-        @objects.each { |c| yield(c) }
-      end
+      content = @objects.collect do |c|
+          @template.with_output_buffer{block.call(c)}
+      end.join("\n").html_safe
+      @template.content_tag(:tbody, content, options, false)
     end
     
-    def body_r(*args)
+    def body_r(*args, &block)
       raise ArgumentError, "Missing block" unless block_given?
       options = options_from_hash(args)
-      tbody do
-        @objects.each { |c|
-          concat(tag(:tr, options, true))
-          yield(c)
-          concat('</tr>')
-        }
+      tds = @objects.collect do |thing|
+          @template.with_output_buffer{block.call(thing)}
       end
+      content = tds.collect do |td|
+          @template.content_tag(:tr,td, {}, false)
+      end.join("\n").html_safe
+      "\n#{@template.content_tag(:tbody, content, options, false)}".html_safe
     end    
 
-    def r(*args)
+    def r(*args, &block)
       raise ArgumentError, "Missing block" unless block_given?
       options = options_from_hash(args)
-      tr(options) do
-        yield
-      end
+      @template.content_tag(:tr, nil, options, true, &block)
     end
 
-    def h(*args)
+    def h(*args, &block)
       if block_given?
-        concat(tag(:th, options_from_hash(args), true))
-        yield
-        concat('</th>')
+        @template.content_tag(:th, nil, options_from_hash(args), true, &block)
       else
         content = args.shift
-        content_tag(:th, content, options_from_hash(args))
+        @template.content_tag(:th, content, options_from_hash(args))
       end        
     end
 
-    def d(*args)
+    def d(*args, &block)
       if block_given?
-        concat(tag(:td, options_from_hash(args), true))
-        yield
-        concat('</td>')
+        @template.content_tag(:td, nil, options_from_hash(args), true, &block)
       else
         content = args.shift
-        content_tag(:td, content, options_from_hash(args))
+        @template.content_tag(:td, content, options_from_hash(args))
       end        
     end
-    
 
     private
     
@@ -101,25 +89,9 @@ module TableHelper
       args.last.is_a?(Hash) ? args.pop : {}
     end
     
-    def concat(tag)
-       @template.concat(tag)
-    end
-
-    def content_tag(tag, content, *args)
-      options = options_from_hash(args)
-      @template.content_tag(tag, content, options)
-    end
-    
-    def tbody
-      concat('<tbody>')
-      yield
-      concat('</tbody>')
-    end
-    
-    def tr options
-      concat(tag(:tr, options, true))
-      yield
-      concat('</tr>')      
-    end
+    # def content_tag(tag, content, *args, &block)
+    #   options = options_from_hash(args)
+    #   @template.content_tag(tag, content, options, &block)
+    # end
   end
 end

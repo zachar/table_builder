@@ -1,4 +1,4 @@
-require File.join(File.dirname(__FILE__), 'test_helper.rb')
+require File.expand_path(File.dirname(__FILE__) + '/test_helper.rb')
 
 class CalendarHelperTest < Test::Unit::TestCase
   include ActionView::Helpers::TextHelper

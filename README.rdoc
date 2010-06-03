@@ -2,7 +2,7 @@
 
 Rails builder for creating tables and calendars inspired by ActionView's FormBuilder, updated for Rails 3.0beta
 This is a fork of Petrik de Heus plugin for earlier versions of Rails.  Note the new idiomatic use of "<%=" for the
-table_for and calendar_for functions.
+table_for and calendar_for functions. 
 
 == Examples
 
@@ -115,7 +115,7 @@ If you want to add id's to your td tag you can pass a pattern:
 
 == Install
 
-script/plugin install git://github.com/wizardwerdna/table_builder.git
+rails plugin install git://github.com/wizardwerdna/table_builder.git
   
 == Contributors
 

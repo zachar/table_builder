@@ -1,3 +1,7 @@
+== About this fork
+
+I forked http://github.com/wizardwerdna/table_builder to convert it from a plugin to a gem.
+
 = TableBuilder
 
 Rails builder for creating tables and calendars inspired by ActionView's FormBuilder, updated for Rails 3.0beta

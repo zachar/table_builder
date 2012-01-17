@@ -132,7 +132,28 @@ class CalendarHelperTest < ActionView::TestCase
       %(</table>)
     assert_dom_equal expected, output
   end  
-  
+
+  def test_calendar_for_with_row_headers
+    output = calendar_for([], :year=> 2008, :month => 12, :row_header => true) do |c|
+      c.day do |day, events|
+        if events.nil?
+          concat(day.cweek)
+        else
+          concat(events.collect{|e| e.id}.join)
+        end
+      end
+    end
+    expected = %(<table>) <<
+      %(<tbody>) <<
+        %(<tr><td class="notmonth weekend row_header">48</td><td class="notmonth weekend"></td><td></td><td></td><td></td><td></td><td></td><td class="weekend"></td></tr>) <<
+        %(<tr><td class="weekend row_header">49</td><td class="weekend"></td><td></td><td></td><td></td><td></td><td></td><td class="weekend"></td></tr>) <<
+        %(<tr><td class="weekend row_header">50</td><td class="weekend"></td><td></td><td></td><td></td><td></td><td></td><td class="weekend"></td></tr>) <<
+        %(<tr><td class="weekend row_header">51</td><td class="weekend"></td><td></td><td></td><td></td><td></td><td></td><td class="weekend"></td></tr>) <<
+        %(<tr><td class="weekend row_header">52</td><td class="weekend"></td><td></td><td></td><td></td><td class="notmonth"></td><td class="notmonth"></td><td class="notmonth weekend"></td></tr>) <<
+        %(</tbody>) <<
+      %(</table>)
+    assert_dom_equal expected, output
+  end
 end
 
 class CalendarHelperTest < ActionView::TestCase

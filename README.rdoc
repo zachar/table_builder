@@ -1,6 +1,9 @@
 == About this fork
 
-I forked http://github.com/wizardwerdna/table_builder to convert it from a plugin to a gem.
+I forked https://github.com/jchunky/table_builder to convert it into a gem using Bundler and most importantly, having a
+gemspec so it can easily be added to a Gemfile.
+
+Then we also added some features (check the commit history).
 
 = TableBuilder
 
@@ -138,8 +141,8 @@ and then in your block you get nil as the list of objects and the first day of t
 
 Inside your Gemfile:
 
-  gem 'table_builder', '0.0.3', :git => 'git://github.com/jchunky/table_builder.git' 
-  
+  gem "table_builder", :git => "git://github.com/watu/table_builder.git"
+
 == Contributing
 
 Document any new options and verify the documentation looks correct by running:
@@ -150,7 +153,8 @@ and going to http://localhos:8808
 
 == Contributors
 
-Thanks to Petrik de Heus and Sean Dague.
+Petrik de Heus, Andrew C. Greenberg, Jason Cheong-Kee-You, J. Pablo Fernández.
 
 Original Work Copyright (c) 2008 Petrik de Heus, released under the MIT license.
-Fork revisions Copyright (c) 2010 Andrew C. Greenberg, released under the MIT license
+Fork revisions Copyright (c) 2010 Andrew C. Greenberg, released under the MIT license.
+Fork revisions Copyright (c) 2012 Carrousel Apps Ltd (Watu), released under the MIT license.

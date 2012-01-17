@@ -3,11 +3,11 @@ $:.push File.expand_path("../lib", __FILE__)
 require "table_builder/version"
 
 Gem::Specification.new do |s|
-  s.name        = "table_builder"
+  s.name        = "watu_table_builder"
   s.version     = TableBuilder::VERSION
-  s.authors     = ["Petrik de Heus"]
+  s.authors     = ["Petrik de Heus", "Andrew C. Greenberg", "Jason Cheong-Kee-You", "J. Pablo Fernández"]
   s.email       = ["pupeno@watuhq.com"]
-  s.homepage    = ""
+  s.homepage    = "https://github.com/watu/table_builder"
   s.summary     = %q{Rails builder for creating tables and calendars inspired by ActionView's FormBuilder.}
   s.description = %q{Rails builder for creating tables and calendars inspired by ActionView's FormBuilder.}
 

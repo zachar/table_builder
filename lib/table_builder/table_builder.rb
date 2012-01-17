@@ -5,9 +5,10 @@ module TableHelper
     options = args.last.is_a?(Hash) ? args.pop : {}
     html_options = options[:html]
     builder = options[:builder] || TableBuilder
-    
-    content = with_output_buffer{block.call(builder.new(objects||[], self, options))}
-    self.content_tag(:table, content, html_options, false)
+
+    content_tag(:table, html_options) do
+      yield builder.new(objects || [], self, options)
+    end
   end
 
   class TableBuilder
@@ -23,10 +24,11 @@ module TableHelper
         @template.content_tag(:thead, nil, options_from_hash(args), true, &block)
       else        
         @num_of_columns = args.size
-        content = args.collect do |c|
-            @template.content_tag(:th,c)
-        end.join("\n").html_safe
-        @template.content_tag(:thead, @template.content_tag(:tr,content,{},false))
+        content_tag(:thead,
+          content_tag(:tr,
+            args.collect { |c| content_tag(:th, c.html_safe)}.join('').html_safe
+          )
+        )
       end
     end
 
@@ -50,8 +52,12 @@ module TableHelper
     def body_r(*args, &block)
       raise ArgumentError, "Missing block" unless block_given?
       options = options_from_hash(args)
-      tds = @objects.collect do |thing|
-          @template.with_output_buffer{block.call(thing)}
+      tbody do
+        @objects.each { |c|
+          concat(tag(:tr, options, true))
+          yield(c)
+          concat('</tr>'.html_safe)
+        }
       end
       content = tds.collect do |td|
           @template.content_tag(:tr,td, {}, false)
@@ -89,9 +95,26 @@ module TableHelper
       args.last.is_a?(Hash) ? args.pop : {}
     end
     
-    # def content_tag(tag, content, *args, &block)
-    #   options = options_from_hash(args)
-    #   @template.content_tag(tag, content, options, &block)
-    # end
+    def concat(tag)
+      @template.safe_concat(tag)
+      ""
+    end
+
+    def content_tag(tag, content, *args)
+      options = options_from_hash(args)
+      @template.content_tag(tag, content, options)
+    end
+    
+    def tbody
+      concat('<tbody>')
+      yield
+      concat('</tbody>')
+    end
+    
+    def tr options
+      concat(tag(:tr, options, true))
+      yield
+      concat('</tr>')      
+    end
   end
 end

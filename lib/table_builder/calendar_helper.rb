@@ -1,13 +1,14 @@
 module CalendarHelper
   # Generates a calendar (as a table) for an array of objects placing each of them on the corresponding date.
   #
-  # TODO: fully document this method, the current documentation is far from done.
+  # **TODO: fully document this method, the current documentation is far from done.**
   #
   # @param [Hash] options extra options
+  #
   #   :row_header if true, each row will have an extra cell at the beginning, as a row header. A typical usage would be
-  #     to output week numbers. When the block is called, it will get the date that would normally be passed to the
-  #     first day of the week (to give you some context) and a nil list of objects (and that's how you recognize it as
-  #     a header, because empty days get an empty array, not nil).
+  #   to output week numbers. When the block is called, it will get the date that would normally be passed to the
+  #   first day of the week (to give you some context) and a nil list of objects (and that's how you recognize it as
+  #   a header, because empty days get an empty array, not nil).
   def calendar_for(objects, *args, &block)
     raise ArgumentError, "Missing block" unless block_given?
     options = args.last.is_a?(Hash) ? args.pop : {}

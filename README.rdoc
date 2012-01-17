@@ -140,6 +140,14 @@ Inside your Gemfile:
 
   gem 'table_builder', '0.0.3', :git => 'git://github.com/jchunky/table_builder.git' 
   
+== Contributing
+
+Document any new options and verify the documentation looks correct by running:
+
+  yard server --reload
+
+and going to http://localhos:8808
+
 == Contributors
 
 Thanks to Petrik de Heus and Sean Dague.

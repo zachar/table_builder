@@ -1,3 +1,5 @@
+{<img src="https://secure.travis-ci.org/watu/table_builder.png" />}[http://travis-ci.org/watu/table_builder]
+
 == About this fork
 
 I forked https://github.com/jchunky/table_builder to convert it into a gem using Bundler and most importantly, having a

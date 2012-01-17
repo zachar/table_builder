@@ -116,7 +116,24 @@ If you want to add id's to your td tag you can pass a pattern:
 
   <%= t.day(:id => 'day_%d') do |day, tasks| %>
 
+To have a header at the begining of each row:
 
+  <%= calendar_for(@tasks, :row_header => true) do |t| %>
+
+and then in your block you get nil as the list of objects and the first day of thet upcoming week. For example:
+
+  <%= calendar_for(@tasks) do |t| %>
+    <%= t.day do |day, tasks| %>
+      <% if tasks.nil? %>
+        <%= day.cweek %>
+      <% else %>
+        <%= day.day %>
+        <% tasks.each do |task| %>
+          <%= h(task.name) %>
+        <% end %>
+      <% end %>
+    <% end %>
+  <% end %>
 == Install
 
 Inside your Gemfile:

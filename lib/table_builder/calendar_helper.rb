@@ -1,5 +1,13 @@
 module CalendarHelper
-
+  # Generates a calendar (as a table) for an array of objects placing each of them on the corresponding date.
+  #
+  # TODO: fully document this method, the current documentation is far from done.
+  #
+  # @param [Hash] options extra options
+  #   :row_header if true, each row will have an extra cell at the beginning, as a row header. A typical usage would be
+  #     to output week numbers. When the block is called, it will get the date that would normally be passed to the
+  #     first day of the week (to give you some context) and a nil list of objects (and that's how you recognize it as
+  #     a header, because empty days get an empty array, not nil).
   def calendar_for(objects, *args, &block)
     raise ArgumentError, "Missing block" unless block_given?
     options = args.last.is_a?(Hash) ? args.pop : {}
@@ -16,6 +24,7 @@ module CalendarHelper
       super(objects, template, options)
       @calendar = calendar.new(options)
       @today = options[:today] || Time.now
+      @row_header = options[:row_header] || false
     end    
     
     def day(*args,&block)
@@ -30,6 +39,14 @@ module CalendarHelper
             day, objects = array
 
             output << @template.tag(:tr,options,true) if (day.wday ==  @calendar.first_weekday)
+            if @row_header && day.wday ==  @calendar.first_weekday
+              row_header_options = td_options(day, id_pattern, (objects.empty? ? nil: activity_class))
+              row_header_options[:class] ||= ""
+              row_header_options[:class] << " row_header"
+              output << @template.tag(:td, row_header_options, true)
+              output << @template.with_output_buffer{block.call(day, nil)}
+              output << '</td>'
+            end
             output << @template.tag(:td,td_options(day, id_pattern, (objects.empty? ? nil: activity_class)), true)
             output << @template.with_output_buffer{block.call(day, objects)}
             output << '</td>'

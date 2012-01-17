@@ -1,6 +1,6 @@
 module TableHelper
 
-  def table_for(objects, *args, &block)
+  def table_for(objects, *args)
     raise ArgumentError, "Missing block" unless block_given?
     options = args.last.is_a?(Hash) ? args.pop : {}
     html_options = options[:html]
@@ -19,9 +19,11 @@ module TableHelper
       @objects, @template, @options = objects, template, options
     end
 
-    def head(*args, &block)
+    def head(*args)
       if block_given?
-        @template.content_tag(:thead, nil, options_from_hash(args), true, &block)
+        concat(tag(:thead, options_from_hash(args), true))
+        yield
+        concat('</thead>')
       else        
         @num_of_columns = args.size
         content_tag(:thead,
@@ -32,24 +34,25 @@ module TableHelper
       end
     end
 
-    def head_r(*args, &block)
+    def head_r(*args)
       raise ArgumentError, "Missing block" unless block_given?
       options = options_from_hash(args)
       head do
-        @template.content_tag(:tr, nil, options, true, &block)
+        concat(tag(:tr, options, true))
+        yield
+        concat('</tr>')
       end
     end
 
-    def body(*args, &block)
+    def body(*args)
       raise ArgumentError, "Missing block" unless block_given?
       options = options_from_hash(args)
-      content = @objects.collect do |c|
-          @template.with_output_buffer{block.call(c)}
-      end.join("\n").html_safe
-      @template.content_tag(:tbody, content, options, false)
+      tbody do
+        @objects.each { |c| yield(c) }
+      end
     end
     
-    def body_r(*args, &block)
+    def body_r(*args)
       raise ArgumentError, "Missing block" unless block_given?
       options = options_from_hash(args)
       tbody do
@@ -59,35 +62,38 @@ module TableHelper
           concat('</tr>'.html_safe)
         }
       end
-      content = tds.collect do |td|
-          @template.content_tag(:tr,td, {}, false)
-      end.join("\n").html_safe
-      "\n#{@template.content_tag(:tbody, content, options, false)}".html_safe
     end    
 
-    def r(*args, &block)
+    def r(*args)
       raise ArgumentError, "Missing block" unless block_given?
       options = options_from_hash(args)
-      @template.content_tag(:tr, nil, options, true, &block)
+      tr(options) do
+        yield
+      end
     end
 
-    def h(*args, &block)
+    def h(*args)
       if block_given?
-        @template.content_tag(:th, nil, options_from_hash(args), true, &block)
+        concat(tag(:th, options_from_hash(args), true))
+        yield
+        concat('</th>')
       else
         content = args.shift
-        @template.content_tag(:th, content, options_from_hash(args))
+        content_tag(:th, content, options_from_hash(args))
       end        
     end
 
-    def d(*args, &block)
+    def d(*args)
       if block_given?
-        @template.content_tag(:td, nil, options_from_hash(args), true, &block)
+        concat(tag(:td, options_from_hash(args), true))
+        yield
+        concat('</td>')
       else
         content = args.shift
-        @template.content_tag(:td, content, options_from_hash(args))
+        content_tag(:td, content, options_from_hash(args))
       end        
     end
+    
 
     private
     

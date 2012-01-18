@@ -7,6 +7,9 @@ gemspec so it can easily be added to a Gemfile.
 
 Then we also added some features (check the commit history).
 
+If you have changes you thing should be merged back into mainstream, feel free to send me a pull request, I'd like to
+try to maintain as complete as possible branch and then maybe release it as a gem (maybe with another name).
+
 = TableBuilder
 
 Rails builder for creating tables and calendars inspired by ActionView's FormBuilder, updated for Rails 3.0beta

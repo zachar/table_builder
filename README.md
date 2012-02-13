@@ -1,4 +1,4 @@
-![Continuous Integratio][https://secure.travis-ci.org/watu/table_builder.png "Continuous Integration"]
+<a href="http://travis-ci.org/watu/table_builder"><img src="https://secure.travis-ci.org/watu/table_builder.png" alt="Continuous integration status"/></a>
 
 
 About watu_table_builder

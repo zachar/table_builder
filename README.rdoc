@@ -1,14 +1,20 @@
 {<img src="https://secure.travis-ci.org/watu/table_builder.png" />}[http://travis-ci.org/watu/table_builder]
 
-== About this fork
+== About watu_table_builder
 
-I forked https://github.com/jchunky/table_builder to convert it into a gem using Bundler and most importantly, having a
-gemspec so it can easily be added to a Gemfile.
+watu_table_builder is a fork of [table_builder](https://github.com/jchunky/table_builder) in an effort to bring it up to
+speed with the current Ruby and Rails practices (bundler, gem, ci) as well as maybe re-vive it, start merging useful
+branches, implementing new features, fixing bugs, etc.
 
-Then we also added some features (check the commit history).
+= Install
 
-If you have changes you thing should be merged back into mainstream, feel free to send me a pull request, I'd like to
-try to maintain as complete as possible branch and then maybe release it as a gem (maybe with another name).
+Add this to your Gemfile:
+
+  gem "watu_table_builder", :require => "table_builder"
+
+or if you prefer to use it straight from GitHub:
+
+  gem "table_builder", :git => "git://github.com/watu/table_builder.git"
 
 = TableBuilder
 
@@ -142,11 +148,6 @@ and then in your block you get nil as the list of objects and the first day of t
       <% end %>
     <% end %>
   <% end %>
-== Install
-
-Inside your Gemfile:
-
-  gem "table_builder", :git => "git://github.com/watu/table_builder.git"
 
 == Contributing
 

@@ -17,7 +17,7 @@ Add this to your Gemfile:
 
 or if you prefer to use it straight from GitHub:
 
-    gem "table_builder", :git => "git://github.com/watu/table_builder.git"
+    gem "watu_table_builder", :require => "table_builder", :git => "git://github.com/watu/table_builder.git"
 
 TableBuilder
 ============

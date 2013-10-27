@@ -85,7 +85,7 @@ module CalendarHelper
     def initialize(options={})
       @year               = options[:year] || Time.now.year
       @month              = options[:month] || Time.now.month
-      @first_day_of_week  = options[:first_day_of_week] || 0
+      @first_day_of_week  = options[:first_day_of_week] || 1
       @first_weekday      = first_day_of_week(@first_day_of_week)
       @last_weekday       = last_day_of_week(@first_day_of_week)
 
